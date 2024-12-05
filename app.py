@@ -52,23 +52,42 @@ def submit_ticket():
     except Exception as e:
         return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
 
+import os
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
 # Read the environment variables securely
 db_user = os.getenv('DB_USER')  # Your database username
 db_password = os.getenv('DB_PASSWORD')  # Your database password
 db_host = os.getenv('DB_HOST')  # Your database host
 db_port = os.getenv('DB_PORT')  # Your database port
 db_name = os.getenv('DB_NAME')  # Your database name
-db_sslmode = os.getenv('DB_SSLMODE')  # SSL Mode
+db_sslmode = os.getenv('DB_SSLMODE')  # SSL Mode (e.g., "required" or "verify-full")
+db_ssl_ca = os.getenv('DB_SSL_CA')  # Path to CA certificate (e.g., "/path/to/ca-certificate.pem")
+db_ssl_cert = os.getenv('DB_SSL_CERT')  # Path to client certificate (optional)
+db_ssl_key = os.getenv('DB_SSL_KEY')  # Path to client key (optional)
 
 # Construct the SQLAlchemy database URI using the environment variables
-app.config['SQLALCHEMY_DATABASE_URI'] = (
-    f"mysql+pymysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}?ssl={db_sslmode}"
+sqlalchemy_uri = (
+    f"mysql+pymysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
 )
 
+# Add SSL parameters if available
+if db_sslmode == "required" or db_sslmode == "verify-full":
+    sqlalchemy_uri += f"?ssl_ca={db_ssl_ca}"
+    if db_ssl_cert:
+        sqlalchemy_uri += f"&ssl_cert={db_ssl_cert}"
+    if db_ssl_key:
+        sqlalchemy_uri += f"&ssl_key={db_ssl_key}"
+
+# Set the SQLAlchemy URI in the Flask app
+app.config['SQLALCHEMY_DATABASE_URI'] = sqlalchemy_uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 
+# Initialize the SQLAlchemy instance
 db = SQLAlchemy(app)
+
 
 
 
