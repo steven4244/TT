@@ -53,13 +53,15 @@ def submit_ticket():
         return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
 
 app.config['SQLALCHEMY_DATABASE_URI'] = (
-    "mssql+pyodbc://adminuser:Henjaymikem6@turnteamsql.database.windows.net:1433/turnteamdatabase"
-    "?driver=ODBC+Driver+18+for+SQL+Server"
+    "mysql+pymysql://doadmin:AVNS_Ra0O73y2zLLf4mstnmk@newturnteamocean-do-user-18369686-0.m.db.ondigitalocean.com:25060/defaultdb"
 )
+
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 
 db = SQLAlchemy(app)
+
 
 TURN_OPTIONS = ["left", "right", "supine", "chair", "nurse", "refused", "out of room"]
 DAY_HOURS = ["7am", "9am", "11am", "1pm", "3pm", "5pm"]
