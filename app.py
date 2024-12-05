@@ -52,24 +52,32 @@ def submit_ticket():
     except Exception as e:
         return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
 
-
 # Read the environment variables securely
 db_user = os.getenv('DB_USER')  # Your database username
 db_password = os.getenv('DB_PASSWORD')  # Your database password
 db_host = os.getenv('DB_HOST')  # Your database host
 db_port = os.getenv('DB_PORT')  # Your database port
 db_name = os.getenv('DB_NAME')  # Your database name
-db_sslmode = os.getenv('DB_SSLMODE')  # SSL Mode
+db_sslmode = os.getenv('DB_SSLMODE')  # SSL Mode (if required)
 
-# Construct the SQLAlchemy database URI using the environment variables
+# Construct the SQLAlchemy database URI without 'ssl-mode'
 app.config['SQLALCHEMY_DATABASE_URI'] = (
-    f"mysql+pymysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}?ssl-mode={db_sslmode}"
+    f"mysql+pymysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
 )
+
+# If you need to enable SSL, you can configure it like this:
+if db_sslmode == "required":
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+        "connect_args": {
+            "ssl": {"ssl_ca": "/path/to/ca.pem", "ssl_cert": "/path/to/client-cert.pem", "ssl_key": "/path/to/client-key.pem"}
+        }
+    }
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 
 db = SQLAlchemy(app)
+
 
 
 TURN_OPTIONS = ["left", "right", "supine", "chair", "nurse", "refused", "out of room"]
