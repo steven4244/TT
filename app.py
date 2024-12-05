@@ -881,17 +881,9 @@ def print_turn_page(unit):
         names=names  # Pass the names dictionary to the template
     )
 
-
 if __name__ == "__main__":
     with app.app_context():
         # Only run migrations in development or set up a proper schema
         # db.create_all()  # Avoid this in production, use migrations instead
-    print(app.url_map)  # Print routes for debugging
+        print(app.url_map)  # Print routes for debugging
     app.run(host='0.0.0.0', port=8080, debug=False)  # Use port 8080 for cloud
-
-
-#if __name__ == "__main__":
-   # with app.app_context():
-    #    db.create_all()
-    #print(app.url_map)  # Print routes for debugging
-    #app.run(debug=True)
