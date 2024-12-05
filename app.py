@@ -58,20 +58,12 @@ db_password = os.getenv('DB_PASSWORD')  # Your database password
 db_host = os.getenv('DB_HOST')  # Your database host
 db_port = os.getenv('DB_PORT')  # Your database port
 db_name = os.getenv('DB_NAME')  # Your database name
-db_sslmode = os.getenv('DB_SSLMODE')  # SSL Mode (if required)
+db_sslmode = os.getenv('DB_SSLMODE')  # SSL Mode
 
-# Construct the SQLAlchemy database URI without 'ssl-mode'
+# Construct the SQLAlchemy database URI using the environment variables
 app.config['SQLALCHEMY_DATABASE_URI'] = (
-    f"mysql+pymysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
+    f"mysql+pymysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}?ssl={db_sslmode}"
 )
-
-# If you need to enable SSL, you can configure it like this:
-if db_sslmode == "required":
-    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
-        "connect_args": {
-            "ssl": {"ssl_ca": "/path/to/ca.pem", "ssl_cert": "/path/to/client-cert.pem", "ssl_key": "/path/to/client-key.pem"}
-        }
-    }
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
